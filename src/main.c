@@ -70,10 +70,8 @@ void free_matrix(int **matrix) {
     }
 }
 
-void iteration(int **matrix, int i, int j){
+void iteration(int **matrix, int i, int j, int N, int M){
     // verificar a contaminação a cada iteração da matrix
-
-
     if(matrix[i][j] == -2){
         //se a pessoa já estava morta da iteração anterior, deverá sumir
         matrix[i][j] = 0;
@@ -81,18 +79,43 @@ void iteration(int **matrix, int i, int j){
     }else if (matrix[i][j] == -1){
         // se a pessoa estiver ontaminada, há chance de cura;
         srand(time(0));
-        int prob = rand() % 9999;
+        int prob = rand() % 10000;
 
         if (prob >=0 && prob<=999){
-            matrix[i][j] = 1 // curada
+            matrix[i][j] = 1; // curada
         }else if(prob>=4000){
-            matrix[i][j]=-2 // morreu
-        }else{
-            continue; //continua contaminada
+            matrix[i][j]=-2; // morreu
         }
+        //continua contaminada 1000<= x <= 3999
     } else if (matrix[i][j] == 1){
         // se a pessoa está saudavel, pode ser contaminada
+        if (i==0){
+            if( matrix[i+1][j] == -1 || matrix[i+1][j] == -2 ){
+                matrix[i][j] = -1;
+            }
+        }else if(i>=N-1){
+            if( matrix[i-1][j] == -1 || matrix[i-1][j] == -2 ){
+                matrix[i][j] = -1;
+            }
+        }else{
+            if( matrix[i+1][j] == -1 || matrix[i+1][j] == -2 ||matrix[i-1][j] == -1 || matrix[i-1][j] == -2 ){
+                matrix[i][j] = -1;
+            }
+        }
         
+        if(j==0){
+            if( matrix[i][j+1] == -1 || matrix[i][j+1] == -2){
+                matrix[i][j] = -1;
+            }
+        }else if( j>=M-1){
+            if(matrix[i][j-1] == -1 || matrix[i][j-1] == -2 ){
+                matrix[i][j] = -1;
+            }
+        }else{
+            if( matrix[i][j+1] == -1 || matrix[i][j+1] == -2 ||matrix[i][j-1] == -1 || matrix[i][j-1] == -2 ){
+                matrix[i][j] = -1;
+            }
+        }
     }
 
 }
@@ -106,13 +129,17 @@ int main(){
     generate(N,M); // gera a população incial
 
     fill_matrix(population_matrix, N,M);
+    print_matrix(population_matrix,N,M);
 
+    int cont =1;
     // loop de iterações NxM
-/*     for (int i =0, i<N; i++){
+    for (int i =0; i<N; i++){
         for (int j=0;j<M;j++){
-            round();
+            iteration(population_matrix,i,j,N,M);
         }
-    } */
+    }
+    printf("\n ---------------- \n");
+    print_matrix(population_matrix,N,M);
 
     return 0;
 }
