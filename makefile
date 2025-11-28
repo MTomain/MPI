@@ -1,7 +1,7 @@
 # --- Variáveis do Compilador ---
 
-# O compilador que usaremos (gcc)
-CC = gcc
+# O compilador que usaremos para mpi é mpicc (gcc)
+CC = mpicc
 
 # Flags de compilação:
 # -Wall: Ativa quase todos os avisos (warnings)
@@ -27,8 +27,13 @@ BINDIR = bin
 # --- Variáveis do Projeto ---
 
 # Nome do executável final que queremos criar
-TARGET = $(BINDIR)/MPI
+TARGET = $(BINDIR)/main_mpi
 
+# Arquivo de entrada e saída padrão para a regra 'run'
+INPUT_FILE = bin/population.txt
+OUTPUT_FILE = output/saida.txt
+# Número padrão de processos para teste (pode ser alterado)
+#NUM_PROCS = 4
 
 # --- Descoberta Automática de Arquivos ---
 
@@ -83,4 +88,5 @@ clean:
 .PHONY: run
 run: $(TARGET)
 	@echo "Executando o programa..."
-	./$(TARGET)
+	./$(TARGET) 
+#$(INPUT_FILE) $(OUTPUT_FILE)

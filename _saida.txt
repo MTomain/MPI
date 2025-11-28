@@ -1,3 +1,0 @@
-Iteracoes_finais: 9
-Mortos: 408
-Sobreviventes: 58

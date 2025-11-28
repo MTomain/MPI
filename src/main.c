@@ -25,7 +25,7 @@ int** alloc_matrix(int lines, int cols) {
 }
 
 //para uso com o generator
-/* int **fill_matrix(int **matrix, int N, int M){
+ it **fill_matrix(int **matrix, int N, int M){
     int i = 0;
     int j = 0;
     char buffer[1024]; // Buffer para a linha inteira
@@ -55,7 +55,7 @@ int** alloc_matrix(int lines, int cols) {
     fclose(fp);
 
     return matrix;
-} */
+} 
 
 void free_matrix(int **matrix) {
     if (matrix) {
@@ -290,7 +290,7 @@ int main(int argc, char *argv[]){
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
 
-    printf("Tempo de execucao Sequencial: %.4f segundos\n", time_spent);
+    printf("Tempo de execução Sequencial: %.4f segundos\n", time_spent);
     free_matrix(population_matrix); 
 
     return 0;
