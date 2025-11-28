@@ -76,14 +76,13 @@ int **read_input_file(const char *filename, int *N_out, int *M_out) {
 }
 
 //escreve resultados em saida.txt
-void write_output(const char *filename, int total_mortos, int total_sobreviventes, int iteracoes_finais) {
+void write_output(const char *filename, int total_mortos, int total_sobreviventes) {
     FILE *fp = fopen(filename, "w");
     if (fp == NULL) {
         fprintf(stderr, " Não foi possivel abrir o arquivo de saída '%s'\n", filename);
         return;
     }
     
-    fprintf(fp, "Iterações_finais: %d\n", iteracoes_finais);
     fprintf(fp, "Mortos: %d\n", total_mortos);
     fprintf(fp, "Sobreviventes: %d\n", total_sobreviventes);
 
@@ -96,25 +95,29 @@ int iteration(int **matrix, int i, int j, int N_local_total, int M_global) {
     if (atual == 0) return 0;
     
     if (atual == -2) {
-        return 0; 
+        return -3; 
+    }
+
+    if(atual == -3){
+        return 0;
     }
     
     if (atual == -1) {
-        int prob = rand() % 1000; 
-        if (prob < 100) return 1; 
-        if (prob < 400) return -1;
+        int prob = rand() % 10000; 
+        if (prob >= 0 && prob < 1000) return 1; 
+        if (prob >=1000 && prob < 4000) return -1;
         return -2; 
     }
     
     if (atual == 1) {
         // Cima (i-1)
-        if (i > 0 && (matrix[i-1][j] == -1 || matrix[i-1][j] == -2)) return -1;
+        if (i > 0 && (matrix[i-1][j] == -1 || matrix[i-1][j] == -2 || matrix[i-1][j] == -3)) return -1;
         // Baixo (i+1)
-        if (i < N_local_total - 1 && (matrix[i+1][j] == -1 || matrix[i+1][j] == -2)) return -1;
+        if (i < N_local_total - 1 && (matrix[i+1][j] == -1 || matrix[i+1][j] == -2 || matrix[i+1][j] == -3)) return -1;
         // Esquerda (j-1)
-        if (j > 0 && (matrix[i][j-1] == -1 || matrix[i][j-1] == -2)) return -1;
+        if (j > 0 && (matrix[i][j-1] == -1 || matrix[i][j-1] == -2 || matrix[i][j-1] == -3)) return -1;
         // Direita (j+1)
-        if (j < M_global - 1 && (matrix[i][j+1] == -1 || matrix[i][j+1] == -2)) return -1;
+        if (j < M_global - 1 && (matrix[i][j+1] == -1 || matrix[i][j+1] == -2 || matrix[i][j+1] == -3)) return -1;
         
         return 1;
     }
@@ -122,7 +125,7 @@ int iteration(int **matrix, int i, int j, int N_local_total, int M_global) {
 }
 
 int check_stop_condition(int N, int M, int total_active_pop) {
-    if (cont_iteracoes >= 100000) {
+    if (cont_iteracoes >= N*M) {
         return 0;
     }
     if (total_active_pop == 0) {
@@ -236,7 +239,7 @@ int **run_mpi_simulation(char *input_file, char *output_file) {
                 next_local_matrix[i][j] = next_state;
 
                 // Contagem de mortes: se a célula era -2 na matriz antiga e virou 0 na nova
-                if (current_local_matrix[i][j] == -2 && next_state == 0) {
+                if (current_local_matrix[i][j] == -3 && next_state == 0) {
                     local_mortes++; // Incrementa a contagem LOCAL
                 }
                 
@@ -290,7 +293,7 @@ int **run_mpi_simulation(char *input_file, char *output_file) {
              printf("Simulação encerrada. %d sobreviventes ativos.\n", total_sobreviventes_finais);
         }
 
-        write_output(output_file, total_mortos_globais, total_sobreviventes_finais, cont_iteracoes);
+        write_output(output_file, total_mortos_globais, total_sobreviventes_finais);
 
         double time_spent = end_time - start_time;
         printf("Tempo de execução MPI (%d procs): %.4f segundos\n", size, time_spent);

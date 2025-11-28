@@ -1,4 +1,4 @@
-#include <stdio.h>
+/* #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -25,7 +25,7 @@ int** alloc_matrix(int lines, int cols) {
 }
 
 //para uso com o generator
- it **fill_matrix(int **matrix, int N, int M){
+int **fill_matrix(int **matrix, int N, int M){
     int i = 0;
     int j = 0;
     char buffer[1024]; // Buffer para a linha inteira
@@ -294,4 +294,4 @@ int main(int argc, char *argv[]){
     free_matrix(population_matrix); 
 
     return 0;
-}
+} */ 
